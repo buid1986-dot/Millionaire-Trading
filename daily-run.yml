@@ -1,0 +1,33 @@
+name: Ejecutar Script Diario
+
+on:
+  schedule:
+    - cron: '0 14 40 * *'  # 14:40 UTC todos los días (ajusta a tu hora)
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Instalar dependencias
+        run: pip install yfinance pandas numpy pytz
+      - name: Ejecutar el script
+        run: python script.py > output.txt  # Captura el output en un archivo
+      - name: Enviar email con resultados
+        uses: dawidd6/action-send-mail@v3  # Usa la versión estable, como v3 o la más reciente (ver docs)
+        with:
+          server_address: smtp.gmail.com  # Para Gmail; cambia si usas otro servidor
+          server_port: 465  # Puerto seguro para Gmail
+          secure: true  # Usa conexión segura (SSL)
+          username: ${{ secrets.MAIL_USERNAME }}  # Tu email desde secrets
+          password: ${{ secrets.MAIL_PASSWORD }}  # Contraseña de app desde secrets
+          from: Tu Nombre <${{ secrets.MAIL_USERNAME }}>  # Remitente
+          to: buid.1986@gmail.com  # Email donde recibirás los resultados (puedes poner varios separados por coma)
+          subject: Resultados diarios de análisis de trading - ${{ github.job }}  # Asunto dinámico
+          body: file://output.txt  # Adjunta el contenido del output como cuerpo de texto plano
+          html_body: file://output.txt  # Opcional: Si quieres formato HTML (convierte Markdown si usas convert_markdown: true)
+          convert_markdown: true  # Opcional: Convierte el output de Markdown a HTML para mejor visualización
