@@ -1,6 +1,7 @@
 name: Ejecutar Script Diario
 
 on:
+  workflow_dispatch:  # Agrega esta línea para ejecuciones manuales
   schedule:
     - cron: '40 14 * * *'  # 14:40 UTC todos los días (ajusta a tu hora)
 
