@@ -16,7 +16,7 @@ jobs:
       - name: Instalar dependencias
         run: pip install yfinance pandas numpy pytz
       - name: Ejecutar el script
-        run: python ESTRATEGIA_TRADING_GAP_FILL.py > output.txt  # Captura el output en un archivo
+        run: python ESTRATEGIA_TRADING_GAP_FILL_V2.py > output.txt  # Captura el output en un archivo
       - name: Enviar email con resultados
         uses: dawidd6/action-send-mail@v6  # Usa la versión estable, como v3 o la más reciente (ver docs)
         with:
