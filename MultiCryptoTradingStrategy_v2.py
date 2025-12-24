@@ -6,6 +6,7 @@ ESTRATEGIA DE TRADING ACTIVO EN CRIPTOMONEDAS
 Autor: Inspirado en principios de Ray Dalio
 Versión: 2.0
 Última actualización: Diciembre 2024
+Zona Horaria: America/Tijuana (PST/PDT)
 
 DESCRIPCIÓN:
 -----------
@@ -54,14 +55,15 @@ GESTIÓN DE RIESGO:
 • Apalancamiento máximo: 3x
 • Máximo 2 posiciones simultáneas
 
-HORARIOS RECOMENDADOS (EST):
----------------------------
-• 09:00-11:00 - Apertura NYSE (alta volatilidad)
-• 14:00-16:00 - Medio día (buen volumen)
-• 20:00-22:00 - Sesión asiática (oportunidades nocturnas)
+HORARIOS RECOMENDADOS (TIJUANA):
+--------------------------------
+• 06:00-08:00 AM - Pre-apertura NYSE
+• 09:00-11:00 AM - Apertura NYSE (alta volatilidad)
+• 11:00 AM-01:00 PM - Media sesión (buen volumen)
+• 01:00-03:00 PM - Cierre NYSE
 
 EVITAR:
-• 00:00-06:00 EST - Madrugada (bajo volumen)
+• 05:00-06:00 PM - Bajo volumen
 • Fines de semana - Movimientos erráticos
 
 CONFIGURACIÓN GITHUB ACTIONS:
@@ -125,8 +127,12 @@ import pandas as pd
 import numpy as np
 import yfinance as yf
 from datetime import datetime, timedelta
+from pytz import timezone
 import warnings
 warnings.filterwarnings('ignore')
+
+# Configurar zona horaria de Tijuana
+TZ_TIJUANA = timezone('America/Tijuana')
 
 class MultiCryptoTradingStrategy:
     """
@@ -163,6 +169,7 @@ class MultiCryptoTradingStrategy:
         self.capital = capital_inicial
         self.max_riesgo_por_trade = 0.02  # 2% máximo por operación
         self.max_posiciones_simultaneas = 2  # Máximo 2 cryptos al mismo tiempo
+        self.tz = TZ_TIJUANA  # Zona horaria de Tijuana
         
         # Cryptocurrencias a analizar con pesos mínimos recomendados
         self.cryptos = {
@@ -186,7 +193,8 @@ class MultiCryptoTradingStrategy:
         Returns:
             bool: True si es L-V, False si es fin de semana
         """
-        return datetime.now().weekday() < 5
+        ahora_tijuana = datetime.now(self.tz)
+        return ahora_tijuana.weekday() < 5
     
     def descargar_datos_crypto(self, ticker, periodo='3mo', intervalo='1h'):
         """
@@ -623,7 +631,8 @@ class MultiCryptoTradingStrategy:
         - Ya se alcanzó el máximo de posiciones
         """
         print("="*80)
-        print(f"ESTRATEGIA MULTI-CRYPTO TRADING - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        ahora_tijuana = datetime.now(self.tz)
+        print(f"ESTRATEGIA MULTI-CRYPTO TRADING - {ahora_tijuana.strftime('%Y-%m-%d %H:%M:%S %Z')}")
         print("="*80)
         
         # === PASO 1: Verificar día operativo ===
@@ -632,7 +641,8 @@ class MultiCryptoTradingStrategy:
             print("Crypto opera 24/7 pero volumen es bajo en weekends")
             return None
         
-        print(f"\nDia operativo: {datetime.now().strftime('%A')}")
+        print(f"\nDia operativo: {ahora_tijuana.strftime('%A, %d de %B')}")
+        print(f"Hora Tijuana: {ahora_tijuana.strftime('%I:%M %p')}")
         print(f"Capital disponible: ${self.capital:,.2f}")
         print(f"Posiciones actuales: {len(self.posiciones_actuales)}/{self.max_posiciones_simultaneas}")
         
@@ -838,7 +848,7 @@ class MultiCryptoTradingStrategy:
         print("\n" + "="*80)
         
         return {
-            'timestamp': datetime.now(),
+            'timestamp': datetime.now(self.tz),
             'crypto': ticker,
             'nombre': nombre,
             'accion': 'LONG' if score > 0 else 'SHORT',
@@ -871,18 +881,22 @@ if __name__ == "__main__":
     print("  - Binance Coin (BNB) - Token de exchange")
     print("  - Ripple (XRP) - Pagos internacionales")
     
-    print("\nCARACTERISTICAS:")
-    print("  - Analisis tecnico multi-indicador")
-    print("  - Seleccion automatica de mejor oportunidad")
-    print("  - Gestion de riesgo: max 2% por operacion")
-    print("  - Maximo 2 posiciones simultaneas")
-    print("  - Apalancamiento dinamico (1-3x)")
-    print("  - Score minimo: ±50 (selectivo)")
+    #print("\nCARACTERISTICAS:")
+    #print("  - Analisis tecnico multi-indicador")
+    #print("  - Seleccion automatica de mejor oportunidad")
+    #print("  - Gestion de riesgo: max 2% por operacion")
+    #print("  - Maximo 2 posiciones simultaneas")
+    #print("  - Apalancamiento dinamico (1-3x)")
+    #print("  - Score minimo: ±50 (selectivo)")
     
-    print("\nHORARIOS RECOMENDADOS (EST):")
-    print("  - 09:00-11:00: Apertura NYSE (alta volatilidad)")
-    print("  - 14:00-16:00: Medio dia (buen volumen)")
-    print("  - 20:00-22:00: Sesion asiatica")
+    #print("\nHORARIOS RECOMENDADOS (TIJUANA):")
+    #print("  - 06:00-08:00 AM: Pre-apertura NYSE")
+    #print("  - 09:00-11:00 AM: Apertura NYSE (alta volatilidad)")
+    #print("  - 11:00 AM-01:00 PM: Media sesion")
+    
+    ahora_tijuana = datetime.now(TZ_TIJUANA)
+    print(f"\nHORA ACTUAL: {ahora_tijuana.strftime('%I:%M %p %Z')}")
+    print(f"FECHA: {ahora_tijuana.strftime('%A, %d de %B de %Y')}")
     
     print("\nCONFIGURACION ACTUAL:")
     estrategia = MultiCryptoTradingStrategy(capital_inicial=10000)
@@ -903,7 +917,7 @@ if __name__ == "__main__":
         print("\n" + "="*80)
         print("RESUMEN EJECUTIVO")
         print("="*80)
-        print(f"\nTIMESTAMP: {resultado['timestamp'].strftime('%Y-%m-%d %H:%M:%S')}")
+        print(f"\nTIMESTAMP: {resultado['timestamp'].strftime('%Y-%m-%d %H:%M:%S %Z')}")
         print(f"CRYPTO: {resultado['nombre']} ({resultado['crypto']})")
         print(f"ACCION: {resultado['accion']}")
         print(f"PRECIO: ${resultado['precio']:,.4f}")
@@ -939,16 +953,16 @@ if __name__ == "__main__":
     print("="*80)
     
     # Información para GitHub Actions
-    print("\nPARA GITHUB ACTIONS:")
-    print("  - Este output se guardara en 'output.txt'")
-    print("  - Se enviara por email automaticamente")
-    print("  - Revisa tu bandeja de entrada")
-    print("  - Si hay señal fuerte, actua rapido")
+    #print("\nPARA GITHUB ACTIONS:")
+    #print("  - Este output se guardara en 'output.txt'")
+    #print("  - Se enviara por email automaticamente")
+    #print("  - Revisa tu bandeja de entrada")
+    #print("  - Si hay señal fuerte, actua rapido")
     
     # Exit code para GitHub Actions
     # 0 = Señal encontrada, 1 = Sin señal
-    import sys
-    if resultado and abs(resultado['score']) > estrategia.score_minimo:
-        sys.exit(0)  # Señal fuerte
-    else:
-        sys.exit(1)  # Sin señal fuerte
+    # import sys
+    # if resultado and abs(resultado['score']) > estrategia.score_minimo:
+    #    sys.exit(0)  # Señal fuerte
+    # else:
+    #    sys.exit(1)  # Sin señal fuerte
