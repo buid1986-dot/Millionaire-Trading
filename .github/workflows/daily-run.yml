@@ -4,7 +4,7 @@ on:
   schedule:
     - cron: '55 13 * * 1-5'  # 13:55 UTC todos los días (5:55AM TJ)
     #- cron: '55 01 * * 2-6'  # 01:55 UTC todos los días (05:55PM TJ)
-    #- cron: '05 04 * * 2-6'  # 01:55 UTC todos los días (08:05PM TJ)
+    - cron: '05 04 * * 2-6'  # 01:55 UTC todos los días (08:05PM TJ)
 
 jobs:
   run-script:
@@ -23,7 +23,7 @@ jobs:
           python Correlaciones_SentimientoCryptoCompareV1.py >> output.txt
           echo "" >> output.txt
           echo "=== ESTRATEGIA DE TRADING: GAP FILL + NIVELES HISTORICOS + INDICADORES HTF ===" >> output.txt
-          python ESTRATEGIA_TRADING_GAP_FILL_V2.1.py >> output.txt
+          python ESTRATEGIA_TRADING_GAP_FILL_V3.py >> output.txt
       - name: Enviar email con resultados
         uses: dawidd6/action-send-mail@v6  # Usa la versión estable, como v3 o la más reciente (ver docs)
         with:
