@@ -20,7 +20,7 @@ jobs:
       - name: Ejecutar el script
         run: |
           echo "=== ANALISIS PRE-SESION NY | CORRELACIONES + SENTIMINETO ===" > output.txt
-          python Correlaciones_SentimientoCryptoCompareV2.py >> output.txt
+          python Correlaciones_SentimientoCryptoCompareV3.py >> output.txt
           echo "" >> output.txt
           echo "=== ESTRATEGIA DE TRADING: GAP FILL + NIVELES HISTORICOS + INDICADORES HTF ===" >> output.txt
           python ESTRATEGIA_TRADING_GAP_FILL_V4.py >> output.txt
