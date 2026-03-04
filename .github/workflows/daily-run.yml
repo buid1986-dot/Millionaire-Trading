@@ -16,14 +16,14 @@ jobs:
         with:
           python-version: '3.12'
       - name: Instalar dependencias
-        run: pip install yfinance pandas numpy pytz
+        run: pip install ccxt pandas numpy requests pytz
       - name: Ejecutar el script
         run: |
           echo "=== ANALISIS PRE-SESION NY | CORRELACIONES + SENTIMINETO ===" > output.txt
-          python Correlaciones_SentimientoCryptoCompareV1.py >> output.txt
+          python Correlaciones_SentimientoCryptoCompareV2.py >> output.txt
           echo "" >> output.txt
           echo "=== ESTRATEGIA DE TRADING: GAP FILL + NIVELES HISTORICOS + INDICADORES HTF ===" >> output.txt
-          python ESTRATEGIA_TRADING_GAP_FILL_V3.py >> output.txt
+          python ESTRATEGIA_TRADING_GAP_FILL_V4.py >> output.txt
       - name: Enviar email con resultados
         uses: dawidd6/action-send-mail@v6  # Usa la versión estable, como v3 o la más reciente (ver docs)
         with:
